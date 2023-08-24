@@ -1,0 +1,865 @@
+
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Synergizing Contrastive Learning and Optimal Transport for 3D Point Cloud Domain Adaptation</title>
+
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+        <script>
+            MathJax = {
+                loader: {load: ['input/asciimath', 'output/chtml']}
+            }
+        </script>
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+        <script type="text/javascript" id="MathJax-script" async
+            src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js">
+        </script>
+
+    <!-- Custom styles for this template -->
+    <style>
+        @import url('https://rsms.me/inter/inter.css');
+
+        html {
+            font-size: 16px;
+        }
+
+        @media (max-width: 575px) {
+
+            .caption {
+                /*display: block;*/
+                width: 100%;
+                /*font-size: 0.8em;*/
+                /*margin-top: 2rem !important;*/
+            }
+
+            .teaserfig {
+                width: 100%;
+                /*border-radius: .25rem;*/
+            }
+
+            .container-fluid {
+                padding: 1em !important;
+            }
+        }
+
+        .container-fluid {
+            max-width: 1360px;
+        }
+
+        html,
+        * {
+            font-family: 'Inter', sans-serif !important;
+        }
+
+        @supports (font-variation-settings: normal) {
+
+            html,
+            * {
+                font-family: 'Inter var', sans-serif !important;
+            }
+        }
+
+        html {
+            box-sizing: border-box;
+        }
+
+        *,
+        *:before,
+        *:after {
+            box-sizing: inherit;
+        }
+
+        .authors,
+        .buttons {
+            font-size: 21px;
+            display: flex;
+            justify-content: space-evenly;
+            margin: 0 auto;
+        }
+
+        .authors {
+            max-width: 1100px;
+            /* flex-basis: 33.33%; */
+            flex-wrap: wrap;
+        }
+
+        .buttons {
+            max-width: 500px;
+        }
+
+        .abstract {
+            display: flex;
+        }
+
+        .abstracttext {
+            font-size: 0.95em;
+        }
+
+        .class_mono {
+            font-family: 'courier', monospace !important;
+        }
+
+        pre {
+            font-size: 87.5%;
+            white-space: pre-wrap;
+            color: #e83e8c;
+            max-width: 1360px;
+        }
+
+        .ptgrid {
+            grid-template-columns: repeat(auto-fit, minmax(620px, 1fr));
+            gap: 10px;
+            /*padding: 10px;*/
+            grid-row-gap: 10px;
+            display: grid;
+            justify-items: center;
+        }
+
+        .ptep {
+            display: grid;
+            padding: 15px;
+            border-radius: .25rem;
+            grid-template-columns: repeat(3, minmax(135px, 1fr)) 1px minmax(135px, 1fr);
+            grid-template-rows: auto auto auto 1fr;
+            grid-column-gap: 10px;
+            grid-row-gap: 5px;
+            background-color: #f8f9fa !important;
+            max-width: 900px;
+        }
+
+
+        .pred {
+            padding: 2px 0;
+            margin-top: 5px;
+            border-radius: .25rem;
+            display: inline-block;
+        }
+
+        .pred.hover {
+            padding: 2px 4px;
+            background-color: rgb(52, 58, 64);
+            color: #fff;
+            word-break: break-all;
+        }
+
+        .gt {
+            padding: 2px 4px;
+            border: 1px rgb(52, 58, 64) solid;
+            /*color: #fff;*/
+            border-radius: .25rem;
+            display: inline-block;
+            margin-top: 5px;
+            word-break: break-all;
+            transition: all 0.12s ease-in;
+            cursor: pointer;
+            font-weight: bold;
+            position: relative;
+            text-align: center;
+        }
+
+        .gt:hover {
+            background-color: rgba(52, 58, 64, 0.2);
+        }
+
+        .pct {
+            font-size: 0.85em;
+            /*margin-left: 8px;*/
+            /*word-break: break-word;*/
+            word-break: break-word;
+            display: none;
+        }
+
+        .pred.hover .pct {
+            display: inline;
+        }
+
+        .pred.hover .predw {
+            margin-right: 8px;
+        }
+
+        .ptep p {
+            padding: 2px 0;
+            display: inline-block;
+            margin: 0;
+            margin-top: 5px;
+        }
+
+        /*  .gt:hover:after {
+              position: absolute;
+              content: "";
+              height: calc(100% + 100px);
+              top: -50px;
+              left: -100px;
+              right: -100px;
+              !*background-color: rgba(255,0,0,0.5);*!
+          }*/
+
+        @media (max-width: 767px) {
+
+            .abstract {
+                display: block;
+            }
+
+            .teaser {
+                text-align: center;
+            }
+
+            .captioncont {
+                display: inline-block;
+                text-align: left;
+            }
+
+            .figcont {
+                display: inline-block;
+            }
+
+            .abstracttext {
+                max-width: 500px;
+                margin: 0 auto;
+            }
+
+            .papercont {
+                padding: 0;
+                text-align: center;
+            }
+
+
+            .papersubcont {
+                display: inline-block;
+            }
+
+            .videodivision {
+                margin-left: 100px !important;
+                margin-right: 100px !important;
+            }
+
+            .paper {}
+
+            .paperinfo {}
+
+            .ptep {
+                grid-template-columns: repeat(3, minmax(90px, 1fr)) 1px minmax(90px, 1fr);
+            }
+
+            pre {
+                max-width: 350px;
+                text-align: left;
+            }
+
+            .pred {
+                /*word-break: break-word;*/
+                word-break: break-all;
+            }
+
+            .ptgrid {
+                grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            }
+
+            .pct {
+                word-break: break-word;
+            }
+        }
+
+        @media (max-width: 575px) {
+            .container-fluid {
+                padding: 0 !important;
+            }
+        }
+
+        .container {
+            position: relative;
+            /*width: 50%; */
+        }
+
+
+        .overlay0 {
+            /*          position: relative;
+          top: 0;
+          bottom: 0;
+          /*left: 0; */
+            /*right: 0;*/
+            height: 100%;
+            width: 100%;
+            opacity: 0;
+        }
+
+        .overlay1 {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            /*left: 0; */
+            /*right: 0;*/
+            height: 100%;
+            width: 100%;
+            opacity: 1;
+        }
+
+
+        .overlay2 {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            /*left: 0; */
+            /*right: 0;*/
+            height: 100%;
+            width: 100%;
+            transition: .5s ease;
+            opacity: 0;
+        }
+
+
+        .figcont:hover .overlay2 {
+            opacity: 1;
+        }
+
+        #captionSolution:hover+#imageSolution {
+            opacity: 1;
+        }
+
+        .likeLatex {
+            font-family: "Times New Roman", Times, serif !important;
+        }
+
+        .scrollable {
+            height: 800px;
+            /* or any value */
+            overflow-y: auto;
+            margin-right: auto;
+            background-color: white;
+            /*box-shadow: #254C5833 10px 10px;*/
+            border: #0270ff 2px solid;
+            /*padding: 10px 10px 10px 10px;*/
+        }
+
+        html {
+            font-size: 15px;
+            letter-spacing: -0.009em;
+        }
+
+        @media (min-width: 770px) {
+            html {
+                font-size: 16px;
+                letter-spacing: -0.011em;
+            }
+        }
+
+        h2 {
+            letter-spacing: -0.022em;
+        }
+
+        h3 {
+            letter-spacing: -0.02em;
+        }
+
+        h5 {
+            letter-spacing: -0.019em;
+        }
+
+        h4 {
+            letter-spacing: -0.02em;
+        }
+
+        .container-fluid {
+            max-width: 1280px;
+        }
+
+        html,
+        * {
+            font-family: 'Inter', sans-serif !important;
+        }
+
+        @supports (font-variation-settings: normal) {
+
+            html,
+            * {
+                font-family: 'Inter var', sans-serif !important;
+            }
+        }
+
+        html {
+            box-sizing: border-box;
+        }
+
+        *,
+        *:before,
+        *:after {
+            box-sizing: inherit;
+        }
+
+        .affils {
+            font-size: 0.8em;
+            color: gray;
+            margin: 12px;
+
+        }
+
+        .cvpr {
+            font-size: 1.1em;
+            color: #2e7ef6;
+            margin: 4px;
+        }
+
+        .figcont span {
+            position: absolute;
+            font-size: 0.9em;
+        }
+
+        .teaserfig {
+            width: 600px;
+            border-radius: .25rem;
+        }
+
+        .abstract {
+            display: flex;
+        }
+
+        .abstracttext,
+        .dataset {
+            font-size: 0.95em;
+        }
+
+        pre {
+            font-size: 87.5%;
+            white-space: pre-wrap;
+            color: #e83e8c;
+        }
+
+        .ptgrid {
+            grid-template-columns: repeat(auto-fit, minmax(620px, 1fr));
+            gap: 10px;
+            /*padding: 10px;*/
+            grid-row-gap: 10px;
+            display: grid;
+            justify-items: center;
+        }
+
+        .ptep {
+            display: grid;
+            padding: 15px;
+            border-radius: .25rem;
+            grid-template-columns: repeat(3, minmax(135px, 1fr)) 1px minmax(135px, 1fr);
+            grid-template-rows: auto auto auto 1fr;
+            grid-column-gap: 10px;
+            grid-row-gap: 5px;
+            background-color: #f8f9fa !important;
+            max-width: 900px;
+        }
+
+        .vid {
+            /*min-height: 400px;*/
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .ptep img {
+            width: 100%;
+            border-radius: .25rem;
+        }
+
+        .refsetlbl {
+            grid-area: 1 / 1 / 2 / 4;
+            font-weight: bold;
+        }
+
+        .tgtlbl {
+            grid-area: 1 / 5 / 2 / 5;
+            font-weight: bold;
+        }
+
+        .im0 {
+            grid-area: 2 / 1 / 3 / 2;
+        }
+
+        .im1 {
+            grid-area: 2 / 2 / 3 / 3;
+        }
+
+        .im2 {
+            grid-area: 2 / 3 / 3 / 4;
+        }
+
+        .imtgt {
+            grid-area: 2 / 5 / 3 / 5;
+        }
+
+        .txt0 {
+            grid-area: 3 / 1 / 4 / 2;
+        }
+
+        .txt1 {
+            grid-area: 3 / 2 / 4 / 3;
+        }
+
+        .txt2 {
+            grid-area: 3 / 3 / 4 / 4;
+        }
+
+        .txttgt {
+            grid-area: 3 / 5 / 4 / 5;
+        }
+
+        .pred {
+            padding: 2px 0;
+            margin-top: 5px;
+            border-radius: .25rem;
+            display: inline-block;
+        }
+
+        .pred.hover {
+            padding: 2px 4px;
+            background-color: rgb(52, 58, 64);
+            color: #fff;
+            word-break: break-all;
+        }
+
+        .gt {
+            padding: 2px 4px;
+            border: 1px rgb(52, 58, 64) solid;
+            /*color: #fff;*/
+            border-radius: .25rem;
+            display: inline-block;
+            margin-top: 5px;
+            word-break: break-all;
+            transition: all 0.12s ease-in;
+            cursor: pointer;
+            font-weight: bold;
+
+        }
+
+        .axis path,
+        .axis line {
+            fill: none;
+            stroke: #000;
+            shape-rendering: crispEdges;
+        }
+
+        .x.axis path {
+            display: none;
+        }
+
+        .line {
+            fill: none;
+            stroke: steelblue;
+            stroke-width: 1.5px;
+        }
+
+        .gt:hover {
+            background-color: rgba(52, 58, 64, 0.2);
+        }
+
+        .pct {
+            font-size: 0.85em;
+            word-break: break-word;
+            display: none;
+        }
+
+        .pred.hover .pct {
+            display: inline;
+        }
+
+        .pred.hover .predw {
+            margin-right: 8px;
+        }
+
+        .ptep p {
+            padding: 2px 0;
+            display: inline-block;
+            margin: 0;
+            margin-top: 5px;
+        }
+
+        @media (max-width: 1199px) {
+            .caption {
+                width: 450px;
+            }
+
+            .teaserfig {
+                width: 510px;
+            }
+
+        }
+
+        @media (max-width: 991px) {
+            .abstract {
+                display: block;
+            }
+
+            .teaser {
+                text-align: center;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+
+
+            .captioncont {
+                display: inline-block;
+                text-align: left;
+            }
+
+            .figcont {
+                display: inline-block;
+            }
+
+            .abstracttext {
+                max-width: 700px;
+                margin: 1.5em auto 0;
+            }
+
+        }
+
+        @media (max-width: 767px) {
+            .abstracttext {
+                max-width: 500px;
+                margin: 1.5em auto 0;
+            }
+
+            .papercont {
+                padding: 0;
+                text-align: center;
+            }
+
+
+            .papersubcont {
+                display: inline-block !important;
+                text-align: center;
+            }
+
+            .paper {}
+
+            .paperinfo {}
+
+            .ptep {
+                grid-template-columns: repeat(3, minmax(90px, 1fr)) 1px minmax(90px, 1fr);
+            }
+
+            pre {
+                max-width: 350px;
+                text-align: left;
+            }
+
+            .otherimages {
+                max-width: 100%;
+            }
+
+            .pred {
+                word-break: break-all;
+            }
+
+            .ptgrid {
+                grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            }
+
+            .pct {
+                word-break: break-word;
+            }
+        }
+
+        @media (max-width: 575px) {
+
+            .caption {
+                width: 100%;
+            }
+
+            .teaserfig {
+                width: 100%;
+            }
+
+            .otherimages {
+                width: 100%;
+            }
+
+
+            .container-fluid {
+                padding: 1em !important;
+            }
+        }
+
+        .affils {
+            font-size: 20px !important;
+            color: gray;
+        }
+
+        .teasertext {
+            position: absolute;
+            left: 6.5%;
+            top: 12.5%;
+            width: 36%;
+            font-size: 18px;
+            line-height: 21px;
+        }
+
+        .caption {
+            display: block;
+            width: 350px;
+            font-size: 0.8em;
+        }
+
+        .teaserfig {
+            width: 410px;
+            border-radius: .25rem;
+        }
+
+        .video_insert {
+            max-width: 100%;
+        }
+
+        /* https://stackoverflow.com/questions/35814653/automatic-height-when-embedding-a-youtube-video */
+        .video-container {
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 */
+            height: 0;
+        }
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+    </style>
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-6T011YJHJE"></script>
+    <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-6T011YJHJE');
+    </script>
+
+</head>
+
+<body>
+
+
+    <div class="container-fluid text-dark p-5">
+
+        <!-- <div class="px-3 py-3 pb-md-4 mx-auto text-center">
+            <h2>FLEX: Full-Body Grasping Without Full-Body Grasps</h2>
+            <div class="authors mt-3">
+                <a href="https://purvaten.github.io/" style="margin-right:0.3cm">Purva Tendulkar</a>
+                <a href="https://www.didacsuris.com/" style="margin-right:0.3cm">Dídac Surís</a>
+                <a href="https://www.cs.columbia.edu/~vondrick/">Carl Vondrick</a>
+            </div>
+            <div class="affils mt-2">
+                <p style="display:inline; margin-right:0.3cm">Columbia University</p>
+            </div>
+            <div class="cvpr mt-2">
+                CVPR 2023<br />
+            </div>
+            <div class="buttons mt-4">
+                <a href="https://arxiv.org/abs/2211.11903" class="btn btn-outline-primary">Paper</a>
+                <a href="https://github.com/purvaten/FLEX" class="btn btn-outline-primary">Code</a>
+                <a href="https://github.com/purvaten/FLEX#replicagrasp-dataset" class="btn btn-outline-primary">Dataset</a>
+            </div>
+        </div> -->
+
+        <div class="px-3 py-3 pb-md-4 mx-auto text-center">
+            <h2 title="COT">Synergizing Contrastive Learning and Optimal Transport for 3D Point Cloud Domain Adaptation</h2>
+            <div class="authors mt-3">
+                <!-- <a href="https://siddharthkatageri.github.io/" style="margin-right:0.3cm">Siddharth Katageri*</a> -->
+                <a href="https://siddharthkatageri.github.io/">Siddharth Katageri<sup>1*</sup></a>
+                <a href="https://github.com/Arko98">Arkadipta De<sup>2*</sup></a>
+                <a href="http://chaitanya.one/">Chaitanya Devaguptapu<sup>2*</sup></a>
+                <a href="">VSSV Prasad<sup>2</sup></a>
+                <a href="https://sites.google.com/site/charusharmacseiith/">Charu Sharma<sup>1</sup></a>
+                <a href="https://scholar.google.dk/citations?user=jNroyK4AAAAJ&hl=en">Manohar Kaul<sup>2</sup></a>
+            </div>
+            <div class="affils mt-2">
+                <p style="display:inline; margin-right:0.3cm"><sup>1</sup>IIIT Hyderabad, India</p>
+                <p style="display:inline"><sup>2</sup>Fujitsu Research India</p><br />
+            </div>
+            <div class="affils mt-2">
+                <p style="display:inline; margin-right:0.3cm">* Equal Contribution</p>
+            </div>
+            <div class="cvpr mt-2">
+                <font style="font-size: 20px">
+                <a href="https://wacv2024.thecvf.com/">WACV 2024</a><br />
+                </font>
+
+            </div>
+            <div class="buttons mt-4">
+                <a href="" class="btn btn-primary">arXiv</a>
+                <a href="https://github.com/siddharthKatageri/COT" class="btn btn-primary">Code</a>
+                <a href="" class="btn btn-primary">Video</a>
+            </div>
+            <!-- <div class="buttons mt-4">
+                <a href="greater_fancy.html" class="btn btn-outline-primary">GREATER Gallery</a>
+                <a href="carla_fancy.html" class="btn btn-outline-primary">CARLA-4D Gallery</a>
+                <a href="https://www.youtube.com/watch?v=Q2S-ogGjcHo" class="btn btn-outline-primary">Video Talk</a>
+            </div> -->
+        </div>
+
+        <section id="summary" class="paper p-3 p-md-4 mt-4" style="text-align: justify">
+            <center>
+                <img src="files/teaser_synergy_legend_cropped.png" width="50%" height="auto" max-width="100%"><br><br>
+            </center>
+            The above Figure gives an overview of our method for UDA. Contrastive learning (CL) and optimal transport (OT) are designed to complement 
+            each other synergistically. CL establishes coarse class clusters in both domains, while OT aligns classes across domains. The colors of data points denote
+            different classes. We show only two samples of target domain for clear visualization purpose, actually, 
+            OT loss is computed on all source-target samples present in a batch.<br><br>
+            <h3>Abstract</h3>
+            <p>Recently, the fundamental problem of unsupervised domain adaptation (UDA) on 3D point clouds has 
+                been motivated by a wide variety of applications in robotics, virtual reality, and scene understanding, to name a few. The point 
+                cloud data acquisition procedures manifest themselves as significant domain discrepancies and geometric variations among both 
+                similar and dissimilar classes. The standard domain adaptation methods developed for images do not directly translate to point 
+                cloud data because of their complex geometric nature. To address this challenge, we leverage the idea of multimodality and 
+                alignment between distributions. We propose a new UDA architecture for point cloud classification that benefits from multimodal 
+                contrastive learning to get better class separation in both domains individually. Further, the use of optimal transport (OT) 
+                aims at learning source and target data distributions jointly to reduce the cross-domain shift and provide a better alignment. 
+                We conduct a comprehensive empirical study on PointDA-10 and GraspNetPC-10 and show that our method achieves state-of-the-art 
+                performance on GraspNetPC-10 (with ≈ 4-12% margin) and best average performance on PointDA-10. Our ablation studies and decision 
+                boundary analysis also validate the significance of our contrastive learning module and OT alignment.
+            </p>
+        </section>
+
+        <section id="method" class="paper p-3 p-md-4 mt-4" style="text-align: justify">
+            <h3>Method</h3>
+            <center>
+            <img src="files/arch.png" width="80%" height="auto" max-width="100%"><br><br>
+            </center>
+                <p style="margin-bottom:0.8cm;"><b>Method.</b>
+                Given a batch of source and target point cloud, each point cloud is first randomly transformed twice using a pre-defined set of 
+                transformations. Then these transformed and original point clouds are passed through and 3D encoder to get their respective embeddings. 
+                Contrastive Loss is applied between the embeddings of the transformed point cloud, to establish coarse class clusters. Further, Contrastive 
+                Loss is also applied between embeddings of the 2D renderings and the latent 3D representation, to establish 3D-2D correspondence 
+                understanding. In the final stage the original point cloud embeddings are passed to the OT loss for establishing alignment.
+            </p>
+        </section>
+
+        <section id="datasets" class="paper p-3 p-md-4 mt-4" style="text-align: justify">
+            <h3>Decision Boundary Visualization</h3>
+            <center>
+                <img src="files/decisionBoundary.png" width="70%" height="auto" max-width="100%"><br><br>
+            </center>
+            <p>
+                We perform an interesting experiment of visualizing the decision boundary. 
+                Early (top-row) and final (bottom-row) epochs decision boundaries on target samples for One-vs-Rest (Monitor class) for S → M. 
+                (a), (e) Only PCM (without adaptation), (b), (f) Contrastive learning with PCM, (c), (g) Optimal transport and contrastive learning with 
+                PCM (Our COT) and (d), (h) Our COT fine-tuned with SPST. We see that, as we include our proposed compoents the representations are 
+                enchanced and the boundary becomes more tight.
+            </p>
+        </section>
+        <hr>
+        <footer class="mt-5">
+            <center>
+                <small>The webpage template was taken from the project page of <a href="https://flex.cs.columbia.edu/">FLEX</a>.</small>
+                <br><br>
+            </center>
+        </footer>
+    </div>
+
+</body>
+
+</html>
