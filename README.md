@@ -18,7 +18,7 @@
     * Equal contribution
   <br>
   <!-- conference -->
-  <h3 align="center">WACV 2024</h3>
+  <h3 align="center">WACV 2024 (Oral Presentation)</h3>
 </p>
 
 ## Abstract
