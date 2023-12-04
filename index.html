@@ -804,12 +804,14 @@
 
         <section id="summary" class="paper p-3 p-md-4 mt-4" style="text-align: justify">
             <center>
-                <img src="files/COT_animation_large.gif" width="50%" height="auto" max-width="100%"><br><br>
+                <!-- <img src="files/COT_animation_large.gif" width="50%" height="auto" max-width="100%"><br><br> -->
+                <video width="60%" height="auto" autoplay controls muted loop>
+                    <source src="./files/COT_animation_large.mp4" type="video/mp4">
+                </video><br><br>
             </center>
             The above video gives an overview of our method for UDA. Contrastive learning (CL) and optimal transport (OT) are designed to complement 
             each other synergistically. CL establishes coarse class clusters in both domains, while OT aligns classes across domains. The colors of data points denote
-            different classes. We show only two samples of target domain for clear visualization purpose, actually, 
-            OT loss is computed on all source-target samples present in a batch.<br><br>
+            different classes.<br><br>
             <h3>Abstract</h3>
             <p>Recently, the fundamental problem of unsupervised domain adaptation (UDA) on 3D point clouds has 
                 been motivated by a wide variety of applications in robotics, virtual reality, and scene understanding, to name a few. The point 
